@@ -73,7 +73,9 @@ command = "$tomlPython"
 args = ["-m", "fxhoudinimcp.readonly"]
 cwd = "$tomlRoot"
 "@
-    Add-Content -LiteralPath $codexConfig -Value $snippet -Encoding utf8NoBOM
+    # Windows PowerShell 5.1 supports UTF8, but not the PowerShell 7
+    # utf8NoBOM enum value. A UTF-8 BOM is valid for Codex's TOML config.
+    Add-Content -LiteralPath $codexConfig -Value $snippet -Encoding UTF8
     Write-Host "Configured Codex: $codexConfig"
 }
 
