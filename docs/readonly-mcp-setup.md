@@ -23,16 +23,21 @@ Set-ExecutionPolicy -Scope Process Bypass
 .\setup-readonly-mcp.ps1 -ConfigureCodex
 ```
 
+Run this from a normal PowerShell after fully closing Codex Desktop. Codex's
+own sandbox may prevent the script from creating `venv` files or backing up
+`%USERPROFILE%\.codex\config.toml`.
+
 The script creates `.venv`, installs this checkout in editable mode, and adds
 an absolute-path `[mcp_servers.fxhoudini]` entry to
 `%USERPROFILE%\.codex\config.toml`. If a server with that name already exists,
 the script stops rather than overwriting it. Existing config is backed up as
 `config.toml.bak` before a new entry is appended.
 
-If `py` is not available, pass the Python command explicitly:
+The script checks `py`, then `python`, then `python.exe`. If Python is installed
+at a known absolute path, pass it explicitly:
 
 ```powershell
-.\setup-readonly-mcp.ps1 -Python python -ConfigureCodex
+.\setup-readonly-mcp.ps1 -Python D:\App\Python312\python.exe -ConfigureCodex
 ```
 
 ## Houdini side
