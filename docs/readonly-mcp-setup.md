@@ -31,7 +31,8 @@ The script creates `.venv`, installs this checkout in editable mode, and adds
 an absolute-path `[mcp_servers.fxhoudini]` entry to
 `%USERPROFILE%\.codex\config.toml`. If a server with that name already exists,
 the script stops rather than overwriting it. Existing config is backed up as
-`config.toml.bak` before a new entry is appended.
+`config.toml.bak` (or a timestamped backup when that name already exists)
+before a new entry is appended.
 
 The script checks `py`, then `python`, then `python.exe`. If Python is installed
 at a known absolute path, pass it explicitly:

@@ -50,12 +50,17 @@ if ($ConfigureCodex) {
         if ($configText -match '(?m)^\[mcp_servers\.fxhoudini\]\s*$') {
             throw "Codex already has an [mcp_servers.fxhoudini] entry. Update it manually or remove that block before rerunning."
         }
+        $backupPath = "$codexConfig.bak"
+        if (Test-Path -LiteralPath $backupPath) {
+            $backupPath = "$codexConfig.bak.$(Get-Date -Format 'yyyyMMdd-HHmmss')"
+        }
         try {
-            Copy-Item -LiteralPath $codexConfig -Destination "$codexConfig.bak" -Force
+            Copy-Item -LiteralPath $codexConfig -Destination $backupPath
         }
         catch {
             throw "Could not back up $codexConfig. Fully exit Codex, then rerun this script from a normal PowerShell."
         }
+        Write-Host "Backed up Codex config: $backupPath"
     }
 
     $tomlRoot = $repoRoot.Replace('\', '\\')
