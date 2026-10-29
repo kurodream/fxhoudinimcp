@@ -67,6 +67,7 @@ docs = [
 
 [project.scripts]
 fxhoudinimcp = "fxhoudinimcp.__main__:main"
+fxhoudinimcp-readonly = "fxhoudinimcp.readonly:main"
 
 [project.urls]
 Homepage = "https://github.com/healkeiser/fxhoudinimcp"

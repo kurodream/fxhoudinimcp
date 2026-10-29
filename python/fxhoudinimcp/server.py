@@ -27,6 +27,7 @@ from fxhoudinimcp._version import __version__
 from fxhoudinimcp.bridge import HoudiniBridge, find_servers
 from fxhoudinimcp.compat import compatibility_warning
 from fxhoudinimcp.node_versions import staleness_warning
+from fxhoudinimcp.read_only import is_read_only_tool, read_only_mode_enabled
 
 logger = logging.getLogger(__name__)
 
@@ -201,7 +202,11 @@ async def lifespan(server: Server):
 
 mcp = build_server(
     name="FXHoudini",
-    instructions=load_markdown("instructions/server_instructions.md"),
+    instructions=load_markdown(
+        "instructions/server_instructions_read_only.md"
+        if read_only_mode_enabled()
+        else "instructions/server_instructions.md"
+    ),
     lifespan=lifespan,
     version=__version__,
 )
@@ -243,6 +248,11 @@ def _compact_tool(*args, **kwargs):
     register = _sdk_tool(*args, **kwargs)
 
     def decorator(function):
+        tool_name = kwargs.get("name") or function.__name__
+        if read_only_mode_enabled() and not is_read_only_tool(tool_name):
+            logger.debug("Read-only mode: hiding MCP tool %s", tool_name)
+            return function
+
         @functools.wraps(function)
         async def compact(*call_args, **call_kwargs):
             result = await function(*call_args, **call_kwargs)

@@ -1,0 +1,8 @@
+# Copy the equivalent generated block into %USERPROFILE%\.codex\config.toml.
+# Prefer setup-readonly-mcp.ps1 -ConfigureCodex because it fills absolute paths.
+
+[mcp_servers.fxhoudini]
+command = "D:\\path\\to\\fxhoudinimcp\\.venv\\Scripts\\python.exe"
+args = ["-m", "fxhoudinimcp.readonly"]
+cwd = "D:\\path\\to\\fxhoudinimcp"
+

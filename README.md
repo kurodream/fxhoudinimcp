@@ -123,6 +123,12 @@ The plugin runs on Houdini's built-in `hwebserver` and executes every `hou.*` ca
 <!-- --8<-- [start:installation] -->
 ## Installation
 
+For the portable inspection-only setup, see
+[`docs/readonly-mcp-setup.md`](docs/readonly-mcp-setup.md) and run
+`setup-readonly-mcp.ps1 -ConfigureCodex` from this checkout. It creates the
+local virtual environment and registers the dedicated read-only entry point;
+it does not commit or copy a Python environment.
+
 Requires Houdini 20.5+ (tested on 20.5, 21.0 and 22.0) and Python 3.10+ outside Houdini.
 
 ```shell
@@ -266,17 +272,50 @@ Every tool call is one undo step. Tools leave your selection, viewport camera an
 | `HOUDINI_HOST` | `localhost` | client | Houdini host |
 | `HOUDINI_PORT` | scan 8100-8115 | client | Pin one Houdini port; switches off the scan |
 | `HOUDINI_TIMEOUT` | plugin timeout + 15 | client | Seconds the client waits for a command |
+| `FXHOUDINIMCP_READ_ONLY` | unset | client | `1`/`true` exposes only the explicit inspection allowlist; hides code execution and scene/file mutation tools |
 | `MCP_TRANSPORT` | `stdio` | client | `stdio` or `streamable-http` |
 | `LOG_LEVEL` | `INFO` | client | Logging level |
 
 Houdini-side variables live in the package file `install` wrote, where every one sits at its default. They win over the same variables in your shell; `install` keeps your edits when it runs again. Client-side variables go in your MCP client's config.
+
+### Read-only mode
+
+For inspection-only use, set `FXHOUDINIMCP_READ_ONLY=1` in the environment of
+the MCP server process. The server then registers only an explicit allowlist of
+scene, node, parameter, geometry, HDA, USD, error, cache-status and Houdini
+documentation inspection tools. Unknown and future tools are hidden by
+default. In particular, `execute_python`, `execute_hscript`, node/parameter
+writes, scene load/save, cache writes, rendering and shelf execution are not
+registered.
+
+This is a server-side tool-surface restriction. Keep the Houdini bridge bound
+to loopback and do not expose its HTTP port to untrusted clients.
+
+Alternatively, use the dedicated entry point so the mode cannot be omitted:
+
+```json
+{
+  "command": "D:\\App\\Python312\\Scripts\\fxhoudinimcp-readonly.exe",
+  "args": []
+}
+```
+
+The equivalent portable form is:
+
+```text
+python -m fxhoudinimcp.readonly
+```
 <!-- --8<-- [end:environment] -->
 
 <!-- SECURITY -->
 ## Security
 
 <!-- --8<-- [start:security] -->
-A connection to this server is a shell inside your Houdini session: `execute_python` runs arbitrary code, and there is no authentication or per-tool permission. It is built for one artist's workstation and an MCP client they trust.
+A normal connection to this server is a shell inside your Houdini session:
+`execute_python` runs arbitrary code, and there is no authentication. For an
+inspection-only client, enable `FXHOUDINIMCP_READ_ONLY=1`; this removes the
+code-execution and mutation tools from the MCP surface. It is built for one
+artist's workstation and an MCP client they trust.
 
 - The plugin binds to loopback unless `FXHOUDINIMCP_BIND` says otherwise.
 - Requests with an `Origin` header (a web page) or a non-loopback `Host` (DNS rebinding) are refused.
