@@ -9,6 +9,9 @@ def test_read_only_surface_contains_the_inspection_tools():
     for name in (
         "get_houdini_connection_status",
         "get_scene_info",
+        "get_selection",
+        "get_network_overview",
+        "get_node_errors_detailed",
         "get_node_info",
         "list_children",
         "get_geometry_info",

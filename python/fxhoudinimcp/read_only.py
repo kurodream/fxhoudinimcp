@@ -16,6 +16,11 @@ READ_ONLY_TOOLS = frozenset(
         "get_houdini_connection_status",
         "get_scene_info",
         "get_context_info",
+        "get_network_overview",
+        "get_cook_chain",
+        "get_node_errors_detailed",
+        "get_scene_summary",
+        "get_selection",
         # Nodes and graph.
         "get_node_info",
         "list_children",
