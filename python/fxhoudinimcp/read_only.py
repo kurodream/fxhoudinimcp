@@ -14,6 +14,7 @@ READ_ONLY_TOOLS = frozenset(
     {
         # Connection and scene inspection.
         "get_houdini_connection_status",
+        "connect_houdini",
         "get_scene_info",
         "get_context_info",
         "get_network_overview",
